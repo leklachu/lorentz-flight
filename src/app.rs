@@ -2,6 +2,7 @@
 //
 // and bugs: apparent precision loss in parameters, on 'launch' or drag
 // could show dist & accel in SI, separate to input in ly|g
+// And: Final distance is surprisingly higher than specified
 //
 // and todo: format outputs nicely
 // have more segments but fit to width or scrollable
@@ -56,7 +57,13 @@ impl eframe::App for App {
       // If launched, progress the ship
       if self.launched && self.progress < 1.0 {
          let milestone = self.journeys_end * f64::from(self.progress + 0.01);
-         self.latest = voyage::arrive(self.latest, self.acceleration, milestone);
+         // self.progress records how much of the journey is already completed
+         let acceleration = if self.progress < 0.5 {
+            self.acceleration
+         } else {
+            -self.acceleration
+         };
+         self.latest = voyage::arrive(self.latest, acceleration, milestone);
          self.events[(self.progress * 100.0) as usize] = Some(self.latest.clone());
          self.progress += 0.01;
       }
