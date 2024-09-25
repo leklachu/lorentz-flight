@@ -42,7 +42,10 @@ fn fwd(ship: Event, acceleration: f64) -> Event {
 
 pub fn arrive(ship: Event, acceleration: f64, distance: f64) -> Event {
    let mut aship = ship;
-   while aship.here < distance && ship.speed >= 0.0 {
+   let mut there = -1.0;
+   // while aship.here < distance && (acceleration > 0.0 || ship.speed >= 0.0 && aship.here > there) {
+   while aship.here < distance && (acceleration > 0.0 || aship.here > there) {
+      there = aship.here;
       aship = fwd(aship, acceleration);
    }
    return aship;
